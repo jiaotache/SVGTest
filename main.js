@@ -41,6 +41,8 @@ function draw(){
   //svgキャンバスを作成
     let svgCanvas = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
+    svgCanvas.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    svgCanvas.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
     svgCanvas.setAttribute('id', 'svgArt');
     svgCanvas.setAttribute('width', '80vh');
     svgCanvas.setAttribute('height', '80vh');
