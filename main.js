@@ -52,8 +52,11 @@ function draw(){
     svgCanvas.appendChild(drawRectangle('0','0','80vh','80vh','none','0','#ccc'));
 
   //背景の上に描画したい図形を追加
-    svgCanvas.appendChild(drawLine('10vh','40vh','70vh','40vh','black','2'));
-    svgCanvas.appendChild(drawLine('10vh','40vh','70vh','20vh','red','2'));
+    // svgCanvas.appendChild(drawLine('10vh','40vh','70vh','40vh','black','2'));
+    // svgCanvas.appendChild(drawLine('10vh','40vh','70vh','20vh','red','2'));
+
+
+    svgCanvas.appendChild(drawPath(getStraightLinePathStrByVh(10,40,70,40),'black','2','5'));
     svgCanvas.appendChild(drawCircle('25vh','40vh','15vh','green','2','none'));
     svgCanvas.appendChild(drawRectangle('40vh','25vh','30vh','30vh','blue','2','none'));
   
@@ -73,6 +76,28 @@ function drawLine(x1,y1,x2,y2,color,strokeWidth){
   line.setAttribute('stroke-width', strokeWidth);
   return line;
 }
+
+//Pathオブジェクトを生成するfunction
+function drawPath(pathStr,strokeColor,strokeWidth,miterLimit){
+  path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', pathStr);
+  path.setAttribute('stroke', strokeColor);
+  path.setAttribute('stroke-width', strokeWidth);
+  path.setAttribute('stroke-linejoin', 'miter'); 
+  path.setAttribute('stroke-miterlimit',miterLimit);
+  return path;
+}
+
+function getStraightLinePathStrByVh(x1,y1,x2,y2){
+  const x1Pixels = (x1 / 100) * screen.height;
+  const y1Pixels = (y1 / 100) * screen.height;
+  const x2Pixels = (x2 / 100) * screen.height;
+  const y2Pixels = (y2 / 100) * screen.height;
+
+  const result = 'M ' + x1Pixels + ',' + y1Pixels + ' ' + x2Pixels + ',' + y2Pixels;
+  return result;
+}
+
 
 //正円オブジェクトを生成するfunction
 function drawCircle(CenterX,CenterY,r,strokeColor,strokeWidth,fillColor){
