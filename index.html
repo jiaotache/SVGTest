@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>SVG描画テスト</title>
+</head>
+<body>
+  <div id="container"></div>
+  <div class="controlPanel">
+    <button type="button" onclick="draw();">描画</button>
+    <button type="button" onclick="downloadSvg('svgArt','art.svg');">SVG保存</button>
+    <button type="button" onclick="downloadPng('svgArt','art.png');">PNG保存</button>
+  </div>
+
+  <!-- js読み込み -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+body{
+  padding:0;
+  margin:0;
+}
+
+#container{
+  margin:5vh;
+  height: 80vh;
+  width: 80vh;
+  border: 2px solid black;
+}
