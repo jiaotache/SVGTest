@@ -1,5 +1,4 @@
-/*
-参考ページ:上から順に読むと良さそうです。
+/** 参考ページ:上から順に読むと良さそうです。
 
   SVGについて – ドキュメント内にSVGを表示する(createElementNS) │ propansystem開発ブログ
     https://propansystem.net/blog/2022/10/13/post-8277/
@@ -20,6 +19,12 @@
 
 */
 
+/** main.jsの注意点
+ * ●画面上のボタンから実行する関数のみを記述。
+ * ●明示的にwindowオブジェクトに関数を設定する。
+ * 　→window.hoge = () => {}のように、アロー関数で代入しないと、htmlから呼び出せない。
+ */
+
 import * as drawLib from "./drawLib.js";
 
 window.addEventListener('DOMContentLoaded', function() {
@@ -31,7 +36,6 @@ window.addEventListener('DOMContentLoaded', function() {
   targetDom.style.width = drawLib.vhToPx(80);
 
 })
-
 
 /**draw()の注意点
  * ●svgCanvasのx座標・y座標・width・height・viewboxは、function vhToPx()で、ピクセル単位に変換する
@@ -60,16 +64,16 @@ window.draw = () =>{
     svgCanvas.setAttribute('viewbox', [0,0,drawLib.vhToPx(canvasSizeVh),drawLib.vhToPx(canvasSizeVh)]);
     
   //背景塗りつぶし用正方形を追加
-    svgCanvas.appendChild(drawLib.drawRectangle(0,0,80,80,'none','0','#ccc'));
+    svgCanvas.appendChild(drawLib.drawRectangle(0,0,80,80,'none',0,'#ccc'));
 
   //背景の上に描画したい図形を追加
-    svgCanvas.appendChild(drawLib.drawPath(drawLib.getStraightLinePathStrByVh(10,40,70,40),'black','2','5'));
-    svgCanvas.appendChild(drawLib.drawCircle(25,40,15,'green','2','none'));
-    svgCanvas.appendChild(drawLib.drawRectangle(40,25,30,30,'blue','2','none'));
+    svgCanvas.appendChild(drawLib.drawPath(drawLib.getStraightLinePathStrByVh(10,40,70,40),'black','2','none','5'));
+    svgCanvas.appendChild(drawLib.drawCircle(25,40,15,'green',2,'none'));
+    svgCanvas.appendChild(drawLib.drawRectangle(40,25,30,30,'blue',2,'none'));
+    svgCanvas.appendChild(drawLib.drawPath(drawLib.getRegularHexagonPathStrByVh(40,40,20),'black','2','none','5'));
 
   //div要素内にSVGタグを埋め込む
     targetDom.appendChild(svgCanvas);
-   
 }
 
 //SVG出力ボタン用function
@@ -119,6 +123,49 @@ window.downloadPng = (elementId, filename)  =>{
     // ローカルにダウンロード
     let link = document.createElement("a");
     link.href = canvas.toDataURL(); // 描画した画像のURIを返す data:image/png;base64
+    link.download = filename;
+  link.click();
+  }
+  // 読み込みに失敗したらこっちが走る
+  image.onerror = (error) => {
+    console.log(error);
+  }
+
+  // SVGデータをXMLで取り出す
+  const svgData = new XMLSerializer().serializeToString(svg);
+  // この時点で、上記のonloadが走る
+  image.src = 'data:image/svg+xml;charset=utf-8;base64,' + btoa(decodeURIComponent(encodeURIComponent(svgData)));
+}
+
+//jpeg出力ボタン用function
+//Canvasって何・・・・？ | パンショクのIT/WEB備忘録 https://pan-shoku.com/canvas/
+window.downloadJpeg = (elementId, filename)  =>{
+
+  // 倍率指定
+  const upscaleRatio = 10;
+
+  // svg domを取得
+  const svg = document.getElementById(elementId);
+
+  // canvasを準備
+  let canvas = document.createElement('canvas');
+  canvas.width = svg.width.baseVal.value * upscaleRatio;
+  canvas.height = svg.height.baseVal.value * upscaleRatio;
+
+  // 描画をするための、canvasの組み込みオブジェクトを準備
+  const ctx = canvas.getContext('2d');
+  // imgオブジェクトを準備
+  let image = new Image();
+
+  // imageの読み込みが完了したら、onloadが走る
+  image.onload = () => {
+    // SVGデータをPNG形式に変換する
+    // canvasに描画する drawImage(image, x座標, y座標, 幅, 高さ)
+    ctx.drawImage(image, 0, 0, image.width * upscaleRatio, image.height * upscaleRatio);
+
+    // ローカルにダウンロード
+    let link = document.createElement("a");
+    link.href = canvas.toDataURL('image/jpeg'); // 描画した画像のURIを返す data:image/png;base64
     link.download = filename;
   link.click();
   }
