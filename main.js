@@ -20,13 +20,15 @@
 
 */
 
+import * as drawLib from "./drawLib.js";
+
 window.addEventListener('DOMContentLoaded', function() {
  
   // 実行したい処理を書く
   let targetDom = document.getElementById('container');
 
-  targetDom.style.height = vhToPx(80);
-  targetDom.style.width = vhToPx(80);
+  targetDom.style.height = drawLib.vhToPx(80);
+  targetDom.style.width = drawLib.vhToPx(80);
 
 })
 
@@ -36,7 +38,7 @@ window.addEventListener('DOMContentLoaded', function() {
  * ●図形描画の関数の引数は、基本vh単位の数値部分だが、strokeWidthはピクセル単位の数字のみで指定
 */
 
-function draw(){
+window.draw = () =>{
 
   //描画先の要素を取得
     let targetDom = document.getElementById('container');
@@ -53,82 +55,27 @@ function draw(){
     svgCanvas.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     svgCanvas.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
     svgCanvas.setAttribute('id', 'svgArt');
-    svgCanvas.setAttribute('width', vhToPx(canvasSizeVh));
-    svgCanvas.setAttribute('height',vhToPx(canvasSizeVh));
-    svgCanvas.setAttribute('viewbox', [0,0,vhToPx(canvasSizeVh),vhToPx(canvasSizeVh)]);
+    svgCanvas.setAttribute('width', drawLib.vhToPx(canvasSizeVh));
+    svgCanvas.setAttribute('height',drawLib.vhToPx(canvasSizeVh));
+    svgCanvas.setAttribute('viewbox', [0,0,drawLib.vhToPx(canvasSizeVh),drawLib.vhToPx(canvasSizeVh)]);
     
   //背景塗りつぶし用正方形を追加
-    svgCanvas.appendChild(drawRectangle(0,0,80,80,'none','0','#ccc'));
+    svgCanvas.appendChild(drawLib.drawRectangle(0,0,80,80,'none','0','#ccc'));
 
   //背景の上に描画したい図形を追加
-    svgCanvas.appendChild(drawPath(getStraightLinePathStrByVh(10,40,70,40),'black','2','5'));
-    svgCanvas.appendChild(drawCircle(25,40,15,'green','2','none'));
-    svgCanvas.appendChild(drawRectangle(40,25,30,30,'blue','2','none'));
+    svgCanvas.appendChild(drawLib.drawPath(drawLib.getStraightLinePathStrByVh(10,40,70,40),'black','2','5'));
+    svgCanvas.appendChild(drawLib.drawCircle(25,40,15,'green','2','none'));
+    svgCanvas.appendChild(drawLib.drawRectangle(40,25,30,30,'blue','2','none'));
 
   //div要素内にSVGタグを埋め込む
     targetDom.appendChild(svgCanvas);
    
 }
 
-//vh(単位なし、数字のみで記載)をピクセルに変換
-function vhToPx(vh) {
-  let viewportHeight = window.innerHeight;
-  let px = (vh * viewportHeight) / 100;
-  return px;
-}
-
-//Pathオブジェクトを生成するfunction
-function drawPath(pathStr,strokeColor,strokeWidth,miterLimit){
-  path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', pathStr);
-  path.setAttribute('stroke', strokeColor);
-  path.setAttribute('stroke-width', strokeWidth);
-  path.setAttribute('stroke-linejoin', 'miter'); 
-  path.setAttribute('stroke-miterlimit',miterLimit);
-  return path;
-}
-
-//vhをピクセルに変換
-function getStraightLinePathStrByVh(x1,y1,x2,y2){
-  const x1Pixels = vhToPx(x1);
-  const y1Pixels = vhToPx(y1);
-  const x2Pixels = vhToPx(x2);
-  const y2Pixels = vhToPx(y2);
-
-  const result = 'M ' + x1Pixels + ',' + y1Pixels + ' ' + x2Pixels + ',' + y2Pixels;
-  return result;
-}
-
-//正円オブジェクトを生成するfunction
-function drawCircle(CenterX,CenterY,r,strokeColor,strokeWidth,fillColor){
-  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  circle.setAttribute('cx', vhToPx(CenterX));
-  circle.setAttribute('cy', vhToPx(CenterY));
-  circle.setAttribute('r', vhToPx(r));
-  circle.setAttribute('stroke', strokeColor);
-  circle.setAttribute('stroke-width', strokeWidth);
-  circle.setAttribute('fill', fillColor);
-  return circle;
-}
-
-//長方形オブジェクトを生成するfunction
-function drawRectangle(x,y,width,height,strokeColor,strokeWidth,fillColor){
-  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  rect.setAttribute('x', vhToPx(x));
-  rect.setAttribute('y', vhToPx(y));
-  rect.setAttribute('width', vhToPx(width));
-  rect.setAttribute('height',vhToPx(height));
-  rect.setAttribute('stroke', strokeColor);
-  rect.setAttribute('stroke-width', strokeWidth);
-  rect.setAttribute('fill', fillColor);
-  return rect;
-}
-
 //SVG出力ボタン用function
-function downloadSvg(elementId, filename) {
+window.downloadSvg = (elementId, filename) => {
   const svgNode = document.getElementById(elementId); 
-  // vh単位のままだと、Inkscapeで開けないので、単位削除とサイズ調整を兼ねて、10倍する(vhを0に置換)
-  const svgText = new XMLSerializer().serializeToString(svgNode).replaceAll('vh','0');
+  const svgText = new XMLSerializer().serializeToString(svgNode);
   const svgBlob = new Blob([svgText], { type: 'image/svg+xml' });
   const svgUrl = URL.createObjectURL(svgBlob);
 
@@ -145,7 +92,7 @@ function downloadSvg(elementId, filename) {
 
 //png出力ボタン用function
 //Canvasって何・・・・？ | パンショクのIT/WEB備忘録 https://pan-shoku.com/canvas/
-function downloadPng(elementId, filename) {
+window.downloadPng = (elementId, filename)  =>{
 
   // 倍率指定
   const upscaleRatio = 10;
@@ -181,7 +128,7 @@ function downloadPng(elementId, filename) {
   }
 
   // SVGデータをXMLで取り出す
-  const svgData = new XMLSerializer().serializeToString(svg).replaceAll('vh','0');
+  const svgData = new XMLSerializer().serializeToString(svg);
   // この時点で、上記のonloadが走る
   image.src = 'data:image/svg+xml;charset=utf-8;base64,' + btoa(decodeURIComponent(encodeURIComponent(svgData)));
 }
