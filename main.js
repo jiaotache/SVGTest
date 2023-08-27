@@ -20,6 +20,17 @@
 
 */
 
+window.addEventListener('DOMContentLoaded', function() {
+ 
+  // 実行したい処理を書く
+  let targetDom = document.getElementById('container');
+
+  targetDom.style.height = vhToPx(80);
+  targetDom.style.width = vhToPx(80);
+
+})
+
+
 /**draw()の注意点
  * ●svgCanvasのx座標・y座標・width・height・viewboxは、function vhToPx()で、ピクセル単位に変換する
  * ●図形描画の関数の引数は、基本vh単位の数値部分だが、strokeWidthはピクセル単位の数字のみで指定
