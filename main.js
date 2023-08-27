@@ -21,12 +21,9 @@
 */
 
 /**draw()の注意点
- * ●strokeWidthは、vhを使わずに数値のみで指定する
- * ●svgCanvasのx座標・y座標・width・height・viewboxはvhで指定する
- * ●図形描画の関数の引数は、基本vhだが、strokeWidthは数字のみで指定
- * ●vhは、SVG出力の際に、0に置換する仕様としている(80vhなら800のように、元の値の10倍となる)
- * →vh単位のままだと、Inkscapeで開けないので、単位削除とサイズ調整を兼ねて、10倍することとした
- */
+ * ●svgCanvasのx座標・y座標・width・height・viewboxは、function vhToPx()で、ピクセル単位に変換する
+ * ●図形描画の関数の引数は、基本vh単位の数値部分だが、strokeWidthはピクセル単位の数字のみで指定
+*/
 
 function draw(){
 
@@ -39,22 +36,23 @@ function draw(){
     })
 
   //svgキャンバスを作成
+    const canvasSizeVh = 80;
     let svgCanvas = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
     svgCanvas.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     svgCanvas.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
     svgCanvas.setAttribute('id', 'svgArt');
-    svgCanvas.setAttribute('width', '80vh');
-    svgCanvas.setAttribute('height','80vh');
-    svgCanvas.setAttribute('viewbox', '0 0 80vh 80vh');
+    svgCanvas.setAttribute('width', vhToPx(canvasSizeVh));
+    svgCanvas.setAttribute('height',vhToPx(canvasSizeVh));
+    svgCanvas.setAttribute('viewbox', [0,0,vhToPx(canvasSizeVh),vhToPx(canvasSizeVh)]);
     
   //背景塗りつぶし用正方形を追加
-    svgCanvas.appendChild(drawRectangle('0','0','80vh','80vh','none','0','#ccc'));
+    svgCanvas.appendChild(drawRectangle(0,0,80,80,'none','0','#ccc'));
 
   //背景の上に描画したい図形を追加
     svgCanvas.appendChild(drawPath(getStraightLinePathStrByVh(10,40,70,40),'black','2','5'));
-    svgCanvas.appendChild(drawCircle('25vh','40vh','15vh','green','2','none'));
-    svgCanvas.appendChild(drawRectangle('40vh','25vh','30vh','30vh','blue','2','none'));
+    svgCanvas.appendChild(drawCircle(25,40,15,'green','2','none'));
+    svgCanvas.appendChild(drawRectangle(40,25,30,30,'blue','2','none'));
 
   //div要素内にSVGタグを埋め込む
     targetDom.appendChild(svgCanvas);
@@ -79,8 +77,7 @@ function drawPath(pathStr,strokeColor,strokeWidth,miterLimit){
   return path;
 }
 
-//vh基準の値を算出
-
+//vhをピクセルに変換
 function getStraightLinePathStrByVh(x1,y1,x2,y2){
   const x1Pixels = vhToPx(x1);
   const y1Pixels = vhToPx(y1);
@@ -94,9 +91,9 @@ function getStraightLinePathStrByVh(x1,y1,x2,y2){
 //正円オブジェクトを生成するfunction
 function drawCircle(CenterX,CenterY,r,strokeColor,strokeWidth,fillColor){
   const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  circle.setAttribute('cx', CenterX);
-  circle.setAttribute('cy', CenterY);
-  circle.setAttribute('r', r);
+  circle.setAttribute('cx', vhToPx(CenterX));
+  circle.setAttribute('cy', vhToPx(CenterY));
+  circle.setAttribute('r', vhToPx(r));
   circle.setAttribute('stroke', strokeColor);
   circle.setAttribute('stroke-width', strokeWidth);
   circle.setAttribute('fill', fillColor);
@@ -106,10 +103,10 @@ function drawCircle(CenterX,CenterY,r,strokeColor,strokeWidth,fillColor){
 //長方形オブジェクトを生成するfunction
 function drawRectangle(x,y,width,height,strokeColor,strokeWidth,fillColor){
   const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  rect.setAttribute('x', x);
-  rect.setAttribute('y', y);
-  rect.setAttribute('width', width);
-  rect.setAttribute('height',height);
+  rect.setAttribute('x', vhToPx(x));
+  rect.setAttribute('y', vhToPx(y));
+  rect.setAttribute('width', vhToPx(width));
+  rect.setAttribute('height',vhToPx(height));
   rect.setAttribute('stroke', strokeColor);
   rect.setAttribute('stroke-width', strokeWidth);
   rect.setAttribute('fill', fillColor);
