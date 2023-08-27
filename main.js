@@ -45,36 +45,27 @@ function draw(){
     svgCanvas.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
     svgCanvas.setAttribute('id', 'svgArt');
     svgCanvas.setAttribute('width', '80vh');
-    svgCanvas.setAttribute('height', '80vh');
+    svgCanvas.setAttribute('height','80vh');
     svgCanvas.setAttribute('viewbox', '0 0 80vh 80vh');
     
   //背景塗りつぶし用正方形を追加
     svgCanvas.appendChild(drawRectangle('0','0','80vh','80vh','none','0','#ccc'));
 
   //背景の上に描画したい図形を追加
-    // svgCanvas.appendChild(drawLine('10vh','40vh','70vh','40vh','black','2'));
-    // svgCanvas.appendChild(drawLine('10vh','40vh','70vh','20vh','red','2'));
-
-
     svgCanvas.appendChild(drawPath(getStraightLinePathStrByVh(10,40,70,40),'black','2','5'));
     svgCanvas.appendChild(drawCircle('25vh','40vh','15vh','green','2','none'));
     svgCanvas.appendChild(drawRectangle('40vh','25vh','30vh','30vh','blue','2','none'));
-  
+
   //div要素内にSVGタグを埋め込む
     targetDom.appendChild(svgCanvas);
    
 }
 
-//直線オブジェクトを生成するfunction
-function drawLine(x1,y1,x2,y2,color,strokeWidth){
-  let line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-  line.setAttribute('x1', x1);
-  line.setAttribute('y1', y1);
-  line.setAttribute('x2', x2);
-  line.setAttribute('y2', y2);
-  line.setAttribute('stroke', color);
-  line.setAttribute('stroke-width', strokeWidth);
-  return line;
+//vh(単位なし、数字のみで記載)をピクセルに変換
+function vhToPx(vh) {
+  let viewportHeight = window.innerHeight;
+  let px = (vh * viewportHeight) / 100;
+  return px;
 }
 
 //Pathオブジェクトを生成するfunction
@@ -88,16 +79,17 @@ function drawPath(pathStr,strokeColor,strokeWidth,miterLimit){
   return path;
 }
 
+//vh基準の値を算出
+
 function getStraightLinePathStrByVh(x1,y1,x2,y2){
-  const x1Pixels = (x1 / 100) * screen.height;
-  const y1Pixels = (y1 / 100) * screen.height;
-  const x2Pixels = (x2 / 100) * screen.height;
-  const y2Pixels = (y2 / 100) * screen.height;
+  const x1Pixels = vhToPx(x1);
+  const y1Pixels = vhToPx(y1);
+  const x2Pixels = vhToPx(x2);
+  const y2Pixels = vhToPx(y2);
 
   const result = 'M ' + x1Pixels + ',' + y1Pixels + ' ' + x2Pixels + ',' + y2Pixels;
   return result;
 }
-
 
 //正円オブジェクトを生成するfunction
 function drawCircle(CenterX,CenterY,r,strokeColor,strokeWidth,fillColor){
@@ -117,7 +109,7 @@ function drawRectangle(x,y,width,height,strokeColor,strokeWidth,fillColor){
   rect.setAttribute('x', x);
   rect.setAttribute('y', y);
   rect.setAttribute('width', width);
-  rect.setAttribute('height', height);
+  rect.setAttribute('height',height);
   rect.setAttribute('stroke', strokeColor);
   rect.setAttribute('stroke-width', strokeWidth);
   rect.setAttribute('fill', fillColor);
